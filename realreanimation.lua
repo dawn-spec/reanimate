@@ -1,13 +1,7 @@
 local module = {}
 
 function module:applyAnimate(Figure)
-	
-	if not Figure then
-		
-		Figure = workspace:FindFirstChild('Rig') or game.Players.LocalPlayer.Character:FindFirstChild('Rig')
-		
-	end
-	
+
 	local Torso = Figure:WaitForChild("Torso")
 	local RightShoulder = Torso:WaitForChild("Right Shoulder")
 	local LeftShoulder = Torso:WaitForChild("Left Shoulder")
@@ -149,8 +143,12 @@ function module:applyAnimate(Figure)
 		end	
 	end
 
-	Figure.Animate.ChildAdded:connect(scriptChildModified)
-	Figure.Animate.ChildRemoved:connect(scriptChildModified)
+	if Figure:FindFirstChild('Animate') then
+
+		Figure.Animate.ChildAdded:connect(scriptChildModified)
+		Figure.Animate.ChildRemoved:connect(scriptChildModified)
+
+	end
 
 
 	for name, fileList in pairs(animNames) do 
@@ -200,22 +198,7 @@ function module:applyAnimate(Figure)
 			currentAnimTrack:AdjustSpeed(currentAnimSpeed)
 		end
 	end
-
-	local function keyFrameReachedFunc(frameName)
-		if (frameName == "End") then
-
-			local repeatAnim = currentAnim
-			-- return to idle if finishing an emote
-			if (emoteNames[repeatAnim] ~= nil and emoteNames[repeatAnim] == false) then
-				repeatAnim = "idle"
-			end
-
-			local animSpeed = currentAnimSpeed
-			playAnimation(repeatAnim, 0.0, Humanoid)
-			setAnimationSpeed(animSpeed)
-		end
-	end
-
+	
 	-- Preload animations
 	local function playAnimation(animName, transitionTime, humanoid) 
 
@@ -257,7 +240,22 @@ function module:applyAnimate(Figure)
 		end
 
 	end
+	
+	local function keyFrameReachedFunc(frameName)
+		if (frameName == "End") then
 
+			local repeatAnim = currentAnim
+			-- return to idle if finishing an emote
+			if (emoteNames[repeatAnim] ~= nil and emoteNames[repeatAnim] == false) then
+				repeatAnim = "idle"
+			end
+
+			local animSpeed = currentAnimSpeed
+			playAnimation(repeatAnim, 0.0, Humanoid)
+			setAnimationSpeed(animSpeed)
+		end
+	end
+	
 	-------------------------------------------------------------------------------------------
 	-------------------------------------------------------------------------------------------
 
@@ -513,6 +511,19 @@ function module:applyAnimate(Figure)
 	Humanoid.Seated:connect(onSeated)
 	Humanoid.PlatformStanding:connect(onPlatformStanding)
 	Humanoid.Swimming:connect(onSwimming)
+	
+	game:GetService("Players").LocalPlayer.Chatted:connect(function(msg)
+		local emote = ""
+		if (string.sub(msg, 1, 3) == "/e ") then
+			emote = string.sub(msg, 4)
+		elseif (string.sub(msg, 1, 7) == "/emote ") then
+			emote = string.sub(msg, 8)
+		end
+
+		if (pose == "Standing" and emoteNames[emote] ~= nil) then
+			playAnimation(emote, 0.1, Humanoid)
+		end
+	end)
 
 end
 
