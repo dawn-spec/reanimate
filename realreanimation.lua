@@ -1,7 +1,13 @@
 local module = {}
 
 function module:applyAnimate(Figure)
-
+	
+	if not Figure then
+		
+		Figure = workspace:FindFirstChild('Rig') or game.Players.LocalPlayer.Character:FindFirstChild('Rig')
+		
+	end
+	
 	local Torso = Figure:WaitForChild("Torso")
 	local RightShoulder = Torso:WaitForChild("Right Shoulder")
 	local LeftShoulder = Torso:WaitForChild("Left Shoulder")
