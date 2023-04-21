@@ -95,7 +95,7 @@ function module:applyAnimate(Figure)
 		animTable[name].connections = {}
 
 		-- check for config values
-		local config = rig.Animate:FindFirstChild(name)
+		local config = Figure.Animate:FindFirstChild(name)
 		if (config ~= nil) then
 			--		print("Loading anims " .. name)
 			table.insert(animTable[name].connections, config.ChildAdded:connect(function(child) configureAnimationSet(name, fileList) end))
@@ -143,8 +143,8 @@ function module:applyAnimate(Figure)
 		end	
 	end
 
-	rig.Animate.ChildAdded:connect(scriptChildModified)
-	rig.Animate.ChildRemoved:connect(scriptChildModified)
+	Figure.Animate.ChildAdded:connect(scriptChildModified)
+	Figure.Animate.ChildRemoved:connect(scriptChildModified)
 
 
 	for name, fileList in pairs(animNames) do 
@@ -294,7 +294,7 @@ function module:applyAnimate(Figure)
 			currentToolAnimKeyframeHandler = toolAnimTrack.KeyframeReached:connect(toolKeyFrameReachedFunc)
 		end
 	end
-	
+
 	local function toolKeyFrameReachedFunc(frameName)
 		if (frameName == "End") then
 			--		print("Keyframe : ".. frameName)	
@@ -507,7 +507,7 @@ function module:applyAnimate(Figure)
 	Humanoid.Seated:connect(onSeated)
 	Humanoid.PlatformStanding:connect(onPlatformStanding)
 	Humanoid.Swimming:connect(onSwimming)
-	
+
 end
 
 return module
